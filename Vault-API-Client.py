@@ -1,0 +1,71 @@
+import os
+import requests
+
+# ip = os.environ['TARGET_IP']
+# URL = "http://{}:8080".format(ip)
+# URL = "http://192.168.8.1:8080"
+# URL = "http://localhost:8080"
+
+
+class VaultAPIClient:
+    def __init__(self, ip):
+        self.ip = ip
+        self.URL = "http://{}:8080".format(self.ip)
+
+    def perform_health_check(self):
+        endpoint = "{}/healthcheck".format(self.URL)
+        response = requests.get(endpoint)
+        return response.json(), response.status_code
+
+    def get_download_speed(self):
+        endpoint = "{}/get/downloadspeed".format(self.URL)
+        response = requests.get(endpoint)
+        return response.json(), response.status_code
+
+    def perform_network_map(self):
+        endpoint = "{}/networkmap/getconnectedclients".format(self.URL)
+        response = requests.get(endpoint)
+        return response
+
+    def perform_localhost_port_scan(self):
+        endpoint = "{}/portscan/local".format(self.URL)
+        response = requests.get(endpoint)
+        return response.json(), response.status_code
+
+    def perform_port_scan(self, ip_address):
+        endpoint = "{}/portscan/{}".format(self.URL, ip_address)
+        response = requests.post(endpoint)
+        return response.json(), response.status_code
+
+    def get_list_of_connected_devices_ips(self):
+        response = self.perform_network_map()
+        if response.status_code == 200:
+            clients = response.json()
+            for x in range(len(clients['Clients'])):
+                self.ip.append(clients['Clients'][x]['IP'])
+            return self.ip
+        else:
+            return "Error: %s" % response.status_code
+
+    def port_scan_all_connected_devices(self):
+        results = {}
+        devices = self.get_list_of_connected_devices_ips()
+        for i in range(len(devices)):
+            results[devices[i]] = self.perform_port_scan(devices[i])[0]
+        return results
+
+    def timeout_connected_device(self, mac_address, ban_time):
+        endpoint = "{}/client/banclient/{}/{}".format(self.URL, mac_address, ban_time)
+        response = requests.get(endpoint)
+        return response.json(), response.status_code
+
+
+# Local Testing
+# router_a = VaultAPIClient("192.168.8.1")
+# print(router_a.perform_health_check())
+# print(perform_network_map().json())
+# print(get_list_of_connected_devices_ips())
+# print(perform_localhost_port_scan())
+# print(port_scan_all_connected_devices())
+# perform_port_scan("192.168.8.1")
+# print(timeout_connected_device("48:01:C5:04:83:71", "1000"))
