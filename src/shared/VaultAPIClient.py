@@ -32,12 +32,13 @@ class VaultAPIClient:
         return response.json(), response.status_code
 
     def get_list_of_connected_devices_ips(self):
+        ips = []
         response = self.perform_network_map()
         if response.status_code == 200:
             clients = response.json()
             for x in range(len(clients['Clients'])):
-                self.ip.append(clients['Clients'][x]['IP'])
-            return self.ip
+                ips.append(clients['Clients'][x]['IP'])
+            return ips
         else:
             return "Error: %s" % response.status_code
 
@@ -57,8 +58,14 @@ class VaultAPIClient:
 # Local Testing
 # router_a = VaultAPIClient("192.168.8.1")
 # print(router_a.perform_health_check())
-# print(perform_network_map().json())
-# print(get_list_of_connected_devices_ips())
+# a = router_a.perform_network_map().json()
+# x = {"name": a['Clients'][0]['Hostname'],
+#           "mac_address": a['Clients'][0]['MAC'],
+#           "ip_address": a['Clients'][0]['IP'],
+#           "status": True}
+# print(x)
+# print(a['Clients'][0])
+# print(router_a.get_list_of_connected_devices_ips())
 # print(perform_localhost_port_scan())
 # print(port_scan_all_connected_devices())
 # perform_port_scan("192.168.8.1")
