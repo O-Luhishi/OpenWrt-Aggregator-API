@@ -1,15 +1,9 @@
-import os
 import requests
-
-# ip = os.environ['TARGET_IP']
-# URL = "http://{}:8080".format(ip)
-# URL = "http://192.168.8.1:8080"
-# URL = "http://localhost:8080"
 
 
 class VaultAPIClient:
     def __init__(self, ip):
-        self.ip = ip
+        self.ip = i
         self.URL = "http://{}:8080".format(self.ip)
 
     def perform_health_check(self):
