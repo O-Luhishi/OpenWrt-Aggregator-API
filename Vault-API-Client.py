@@ -3,7 +3,7 @@ import requests
 
 class VaultAPIClient:
     def __init__(self, ip):
-        self.ip = i
+        self.ip = ip
         self.URL = "http://{}:8080".format(self.ip)
 
     def perform_health_check(self):
