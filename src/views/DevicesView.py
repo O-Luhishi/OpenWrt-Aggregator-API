@@ -9,7 +9,6 @@ device_schema = DeviceSchema()
 
 
 # TODO: Update Vault-API With Dict Keys
-# TODO  Add Function To Read 1 Device Details From IP or ID
 
 @device_api.route('/scannetwork', methods=['GET'])
 def scan():
@@ -25,11 +24,6 @@ def scan():
               "status": True}
         try:
             data = device_schema.load(js)
-
-            # if error:
-            #     return custom_response(error, 400)
-
-            # check if device already exist in the db
             ip_in_db = DeviceModel.get_device_by_ip(data.get('ip_address'))
             if ip_in_db:
                 continue
@@ -53,13 +47,25 @@ def get_all_devices():
     return custom_response(ser_devices, 200)
 
 
-@device_api.route('/getdevice/<int:device_id>', methods=['GET'])
-# @Auth.auth_required
-def get_a_user(device_id):
+@device_api.route('/get_device_by/id/<int:device_id>', methods=['GET'])
+def get_device_by_id(device_id):
     """
-    Get a single user
+    Get a single device by ID
     """
     device = DeviceModel.get_one_device(device_id)
+    if not device:
+        return custom_response({'error': 'Device not found'}, 404)
+
+    ser_device = device_schema.dump(device)
+    return custom_response(ser_device, 200)
+
+
+@device_api.route('/get_device_by/ip/<device_ip>', methods=['GET'])
+def get_device_by_ip(device_ip):
+    """
+    Get a single device by IP
+    """
+    device = DeviceModel.get_device_by_ip(device_ip)
     if not device:
         return custom_response({'error': 'Device not found'}, 404)
 
