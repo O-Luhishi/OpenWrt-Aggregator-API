@@ -4,6 +4,7 @@ from . import db
 
 import datetime
 
+
 class DeviceModel(db.Model):
     """
     Device Model
@@ -58,7 +59,7 @@ class DeviceModel(db.Model):
 
     @staticmethod
     def get_device_by_ip(ip):
-        return DeviceModel.query.get(ip)
+        return DeviceModel.query.filter_by(ip_address=ip).first()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)

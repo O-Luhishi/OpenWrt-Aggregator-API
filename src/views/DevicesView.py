@@ -1,4 +1,5 @@
 from flask import request, json, Response, Blueprint
+from marshmallow import ValidationError
 from ..models.DevicesModel import DeviceModel, DeviceSchema
 from ..shared.Authentication import Auth
 from ..shared.VaultAPIClient import VaultAPIClient
@@ -8,11 +9,10 @@ device_schema = DeviceSchema()
 
 
 # TODO: Update Vault-API With Dict Keys
-# TODO  Add Error Handling For Creating New Devices & Duplicates In DB
 # TODO  Add Function To Read 1 Device Details From IP or ID
 
-@device_api.route('/append', methods=['GET'])
-def create():
+@device_api.route('/scannetwork', methods=['GET'])
+def scan():
     """
     Create Device Function
     """
@@ -23,26 +23,26 @@ def create():
               "mac_address": req_data['Clients'][x]['MAC'],
               "ip_address": req_data['Clients'][x]['IP'],
               "status": True}
-        data = device_schema.load(js)
+        try:
+            data = device_schema.load(js)
 
-        # if error:
-        #     return custom_response(error, 400)
+            # if error:
+            #     return custom_response(error, 400)
 
-        # check if device already exist in the db
-        # ip_in_db = DeviceModel.get_device_by_ip(data.get('ip_address'))
-        # if ip_in_db:
-        #     message = {'error': 'Device already exist, please supply ip address'}
-        #     return custom_response(message, 400)
-
-        device = DeviceModel(data)
-        device.save()
-
+            # check if device already exist in the db
+            ip_in_db = DeviceModel.get_device_by_ip(data.get('ip_address'))
+            if ip_in_db:
+                continue
+            device = DeviceModel(data)
+            device.save()
+        except ValidationError as err:
+                return custom_response(err.messages, 400)
     # JWT Config
     # ser_data = device_schema.dump(device).data
     # token = Auth.generate_token(ser_data.get('id'))
     # return custom_response({'jwt_token': token}, 201)
 
-    return custom_response({'Devices-Added': 'Success'}, 201)
+    return custom_response({'Network-Scan': 'Success'}, 201)
 
 
 @device_api.route('/getalldevices', methods=['GET'])
@@ -53,7 +53,7 @@ def get_all_devices():
     return custom_response(ser_devices, 200)
 
 
-@device_api.route('/<int:device_id>', methods=['GET'])
+@device_api.route('/getdevice/<int:device_id>', methods=['GET'])
 # @Auth.auth_required
 def get_a_user(device_id):
     """
