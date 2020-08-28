@@ -61,8 +61,12 @@ class DeviceModel(db.Model):
     def get_device_by_ip(ip):
         return DeviceModel.query.filter_by(ip_address=ip).first()
 
+    @staticmethod
+    def get_device_id_by_ip(ip):
+        return DeviceModel.query.filter_by(ip_address=ip).first()
+
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '{}'.format(self.id)
 
 
 class DeviceSchema(Schema):

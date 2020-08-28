@@ -28,20 +28,20 @@ def scan():
             device = DeviceModel(data)
             device.save()
         except ValidationError as err:
-                return custom_response(err.messages, 400)
+                return return_response(err.messages, 400)
     # JWT Config
     # ser_data = device_schema.dump(device).data
     # token = Auth.generate_token(ser_data.get('id'))
     # return custom_response({'jwt_token': token}, 201)
 
-    return custom_response({'Network-Scan': 'Success'}, 201)
+    return return_response({'Network-Scan': 'Success'}, 201)
 
 
 @device_api.route('/getalldevices', methods=['GET'])
 def get_all_devices():
     devices = DeviceModel.get_all_devices()
     ser_devices = device_schema.dump(devices, many=True)
-    return custom_response(ser_devices, 200)
+    return return_response(ser_devices, 200)
 
 
 @device_api.route('/get_device_by/id/<int:device_id>', methods=['GET'])
@@ -51,9 +51,9 @@ def get_device_by_id(device_id):
     """
     device = DeviceModel.get_one_device(device_id)
     if not device:
-        return custom_response({'error': 'Device not found'}, 404)
+        return return_response({'error': 'Device not found'}, 404)
     ser_device = device_schema.dump(device)
-    return custom_response(ser_device, 200)
+    return return_response(ser_device, 200)
 
 
 @device_api.route('/get_device_by/ip/<device_ip>', methods=['GET'])
@@ -63,13 +63,13 @@ def get_device_by_ip(device_ip):
     """
     device = DeviceModel.get_device_by_ip(device_ip)
     if not device:
-        return custom_response({'error': 'Device not found'}, 404)
+        return return_response({'error': 'Device not found'}, 404)
 
     ser_device = device_schema.dump(device)
-    return custom_response(ser_device, 200)
+    return return_response(ser_device, 200)
 
 
-def custom_response(res, status_code):
+def return_response(res, status_code):
     """
     Custom Response Function
     """

@@ -29,7 +29,7 @@ class VaultAPIClient:
     def perform_port_scan(self, ip_address):
         endpoint = "{}/portscan/{}".format(self.URL, ip_address)
         response = requests.post(endpoint)
-        return response.json(), response.status_code
+        return response.json()
 
     def get_list_of_connected_devices_ips(self):
         ips = []
