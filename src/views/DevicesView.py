@@ -10,18 +10,16 @@ device_schema = DeviceSchema()
 
 # TODO: Update Vault-API With Dict Keys
 
-@device_api.route('/scannetwork', methods=['GET'])
+@device_api.route('/scan', methods=['GET'])
+# @Auth.auth_required -- TBD
 def scan():
     """
     Create Device Function
     """
-    x = VaultAPIClient("192.168.8.1")
-    req_data = x.perform_network_map().json()
-    for x in range(len(req_data['Clients'])):
-        js = {"name": req_data['Clients'][x]['Hostname'],
-              "mac_address": req_data['Clients'][x]['MAC'],
-              "ip_address": req_data['Clients'][x]['IP'],
-              "status": True}
+    vault = VaultAPIClient("192.168.8.1")
+    devices = vault.perform_network_map().json()
+    for device in range(len(devices['Clients'])):
+        js = devices['Clients'][device]
         try:
             data = device_schema.load(js)
             ip_in_db = DeviceModel.get_device_by_ip(data.get('ip_address'))
@@ -40,7 +38,6 @@ def scan():
 
 
 @device_api.route('/getalldevices', methods=['GET'])
-# @Auth.auth_required
 def get_all_devices():
     devices = DeviceModel.get_all_devices()
     ser_devices = device_schema.dump(devices, many=True)
@@ -55,7 +52,6 @@ def get_device_by_id(device_id):
     device = DeviceModel.get_one_device(device_id)
     if not device:
         return custom_response({'error': 'Device not found'}, 404)
-
     ser_device = device_schema.dump(device)
     return custom_response(ser_device, 200)
 

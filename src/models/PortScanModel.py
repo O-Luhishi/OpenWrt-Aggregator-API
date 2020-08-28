@@ -48,7 +48,6 @@ class PortScanModel(db.Model):
         return '<id {}>'.format(self.id)
 
 
-
 class PortScanSchema(Schema):
     """
     PortScan Schema
