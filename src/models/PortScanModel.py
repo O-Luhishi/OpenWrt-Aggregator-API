@@ -41,8 +41,13 @@ class PortScanModel(db.Model):
         return PortScanModel.query.all()
 
     @staticmethod
-    def get_one_portscan(id):
+    def get_portscan_by_scan_id(id):
         return PortScanModel.query.get(id)
+
+    @staticmethod
+    def get_portscan_by_device_id(id):
+        print("ID:")
+        return PortScanModel.query.filter_by(device_id=1).first()
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
