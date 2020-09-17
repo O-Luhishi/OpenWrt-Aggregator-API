@@ -49,7 +49,7 @@ def get_portscan_result_by_device_id(device_id):
     result = PortScanModel.get_portscan_by_device_id(device_id)
     if not result:
         return return_response({'error': 'PortScan Not Found'}, 404)
-    ser_result = portscan_schema.dump(result)
+    ser_result = portscan_schema.dump(result, many=True)
     return return_response(ser_result, 200)
 
 
@@ -65,7 +65,7 @@ def get_portscan_result_by_ip_address(device_ip):
     result = PortScanModel.get_portscan_by_device_id(device_id)
     if not result:
         return return_response({'error': 'PortScan Not Found'}, 404)
-    ser_result = portscan_schema.dump(result)
+    ser_result = portscan_schema.dump(result, many=True)
     return return_response(ser_result, 200)
 
 

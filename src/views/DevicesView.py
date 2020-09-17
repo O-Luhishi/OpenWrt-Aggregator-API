@@ -49,7 +49,7 @@ def get_device_by_id(device_id):
     """
     Get a single device by ID
     """
-    device = DeviceModel.get_one_device(device_id)
+    device = DeviceModel.get_device(device_id)
     if not device:
         return return_response({'error': 'Device not found'}, 404)
     ser_device = device_schema.dump(device)
@@ -65,6 +65,18 @@ def get_device_by_ip(device_ip):
     if not device:
         return return_response({'error': 'Device not found'}, 404)
 
+    ser_device = device_schema.dump(device)
+    return return_response(ser_device, 200)
+
+
+@device_api.route('/ban/<device_id>', methods=['GET'])
+def ban_device(device_id):
+    """
+    Ban A Device
+    """
+    device = DeviceModel.get_mac_address_by_id(device_id)
+    if not device:
+        return return_response({'error': 'Device not found'}, 404)
     ser_device = device_schema.dump(device)
     return return_response(ser_device, 200)
 

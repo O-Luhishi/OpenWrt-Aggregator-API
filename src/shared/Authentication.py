@@ -75,7 +75,7 @@ class Auth:
                 )
 
             device_id = data['data']['device_id']
-            check_user = DeviceModel.get_one_device(device_id)
+            check_user = DeviceModel.get_device(device_id)
             if not check_user:
                 return Response(
                     mimetype="application/json",

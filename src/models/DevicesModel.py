@@ -54,7 +54,7 @@ class DeviceModel(db.Model):
         return DeviceModel.query.all()
 
     @staticmethod
-    def get_one_device(id):
+    def get_device(id):
         return DeviceModel.query.get(id)
 
     @staticmethod
@@ -62,8 +62,16 @@ class DeviceModel(db.Model):
         return DeviceModel.query.filter_by(ip_address=ip).first()
 
     @staticmethod
-    def get_device_id_by_ip(ip):
-        return DeviceModel.query.filter_by(ip_address=ip).first()
+    def get_ip_address_by_device_id(id):
+        return db.session.query(DeviceModel.ip_address).filter_by(id=id).first()
+
+    @staticmethod
+    def get_mac_address_by_id(id):
+        return db.session.query(DeviceModel.mac_address).filter_by(id=id).first()
+
+    @staticmethod
+    def get_mac_address_by_ip(ip):
+        return db.session.query(DeviceModel.mac_address).filter_by(ip_address=ip).first()
 
     def __repr__(self):
         return '{}'.format(self.id)
