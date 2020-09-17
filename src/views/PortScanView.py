@@ -1,5 +1,4 @@
-# TODO: Create Error Handling For IP's That Don't Exist When PortScanning Or Fetching Results
-# TODO: Create Get_Portscan_Results Function By ID/IP
+# TODO: Create Error Handling For IP's That Don't Exist When PortScanning
 
 from flask import request, g, Blueprint, json, Response
 from ..shared.Authentication import Auth
@@ -20,13 +19,25 @@ def portscan(device_ip):
     """
     vault = VaultAPIClient("192.168.8.1")
     portscan_results = vault.perform_port_scan(device_ip)
-    device_id = int(str(DeviceModel.get_device_id_by_ip(device_ip)))
+    device_id = int(str(DeviceModel.get_device_by_ip(device_ip)))
     results = {"device_id": device_id, "results": str(portscan_results)}
     data = portscan_schema.load(results)
     post = PortScanModel(data)
     post.save()
     data = portscan_schema.dump(post)
     return return_response(data, 201)
+
+
+@portscan_api.route('/get_all', methods=['GET'])
+def get_all_portscan_results():
+    """
+    Get All PortScan Results
+    """
+    result = PortScanModel.get_all_portscans()
+    if not result:
+        return return_response({'error': 'No PortScans Not Found'}, 404)
+    ser_result = portscan_schema.dump(result, many=True)
+    return return_response(ser_result, 200)
 
 
 @portscan_api.route('/get_by_scan_id/<int:scan_id>', methods=['GET'])

@@ -66,6 +66,10 @@ class DeviceModel(db.Model):
         return db.session.query(DeviceModel.ip_address).filter_by(id=id).first()
 
     @staticmethod
+    def get_device_name_by_device_id(id):
+        return db.session.query(DeviceModel.name).filter_by(id=id).first()
+
+    @staticmethod
     def get_mac_address_by_id(id):
         return db.session.query(DeviceModel.mac_address).filter_by(id=id).first()
 
