@@ -40,6 +40,8 @@ def scan():
 @device_api.route('/getalldevices', methods=['GET'])
 def get_all_devices():
     devices = DeviceModel.get_all_devices()
+    if not devices:
+        return return_response({'Error': 'No Devices Found'}, 404)
     ser_devices = device_schema.dump(devices, many=True)
     return return_response(ser_devices, 200)
 
@@ -51,7 +53,7 @@ def get_device_by_id(device_id):
     """
     device = DeviceModel.get_device(device_id)
     if not device:
-        return return_response({'error': 'Device not found'}, 404)
+        return return_response({'Error': 'Device Not Found'}, 404)
     ser_device = device_schema.dump(device)
     return return_response(ser_device, 200)
 
@@ -63,7 +65,7 @@ def get_device_by_ip(device_ip):
     """
     device = DeviceModel.get_device_by_ip(device_ip)
     if not device:
-        return return_response({'error': 'Device not found'}, 404)
+        return return_response({'Error': 'Device Not Found'}, 404)
 
     ser_device = device_schema.dump(device)
     return return_response(ser_device, 200)
@@ -76,7 +78,7 @@ def ban_device(device_id):
     """
     device = DeviceModel.get_mac_address_by_id(device_id)
     if not device:
-        return return_response({'error': 'Device not found'}, 404)
+        return return_response({'Error': 'Device Not Found'}, 404)
     ser_device = device_schema.dump(device)
     return return_response(ser_device, 200)
 

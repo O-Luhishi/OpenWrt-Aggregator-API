@@ -35,7 +35,7 @@ def get_all_portscan_results():
     """
     result = PortScanModel.get_all_portscans()
     if not result:
-        return return_response({'error': 'No PortScans Not Found'}, 404)
+        return return_response({'error': 'No PortScans Found'}, 404)
     ser_result = portscan_schema.dump(result, many=True)
     return return_response(ser_result, 200)
 
