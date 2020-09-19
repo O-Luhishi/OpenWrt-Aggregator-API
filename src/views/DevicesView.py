@@ -14,7 +14,7 @@ device_schema = DeviceSchema()
 # @Auth.auth_required -- TBD
 def scan():
     """
-    Create Device Function
+    Scan Devices On A Network & Store Them In DB
     """
     vault = VaultAPIClient("192.168.8.1")
     devices = vault.perform_network_map().json()
@@ -49,7 +49,7 @@ def get_all_devices():
 @device_api.route('/get_device_by/id/<int:device_id>', methods=['GET'])
 def get_device_by_id(device_id):
     """
-    Get a single device by ID
+    Get A Single Device By ID
     """
     device = DeviceModel.get_device(device_id)
     if not device:
@@ -61,7 +61,7 @@ def get_device_by_id(device_id):
 @device_api.route('/get_device_by/ip/<device_ip>', methods=['GET'])
 def get_device_by_ip(device_ip):
     """
-    Get a single device by IP
+    Get A Single Device By IP
     """
     device = DeviceModel.get_device_by_ip(device_ip)
     if not device:
@@ -72,15 +72,37 @@ def get_device_by_ip(device_ip):
 
 
 @device_api.route('/ban/<device_id>', methods=['GET'])
-def ban_device(device_id):
+def ban_device_by_id(device_id):
     """
-    Ban A Device
+    Ban A Device By Passing Device ID
     """
     device = DeviceModel.get_mac_address_by_id(device_id)
     if not device:
         return return_response({'Error': 'Device Not Found'}, 404)
+    vault = VaultAPIClient("192.168.8.1")
     ser_device = device_schema.dump(device)
-    return return_response(ser_device, 200)
+    response, code = vault.timeout_connected_device(ser_device["mac_address"], 1000)
+    if code == 200:
+        return return_response(response, code)
+    else:
+        return return_response(response, code)
+
+
+@device_api.route('/ban/ip/<device_ip>', methods=['GET'])
+def ban_device_by_ip(device_ip):
+    """
+    Ban A Device By Passing In Device IP Address
+    """
+    device = DeviceModel.get_mac_address_by_ip(device_ip)
+    if not device:
+        return return_response({'Error': 'Device Not Found'}, 404)
+    vault = VaultAPIClient("192.168.8.1")
+    ser_device = device_schema.dump(device)
+    response, code = vault.timeout_connected_device(ser_device["mac_address"], 1000)
+    if code == 200:
+        return return_response(response, code)
+    else:
+        return return_response(response, code)
 
 
 def return_response(res, status_code):
