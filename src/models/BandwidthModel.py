@@ -49,6 +49,9 @@ class BandwidthModel(db.Model):
             BandwidthModel.download_speed, BandwidthModel.upload_speed, BandwidthModel.ping)\
             .order_by(desc(BandwidthModel.created_at)).first()
 
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
 
 class BandwidthSchema(Schema):
     """

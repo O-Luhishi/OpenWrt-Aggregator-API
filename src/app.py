@@ -6,6 +6,7 @@ from .models import db
 from .views.DevicesView import device_api as device_blueprint
 from .views.PortScanView import portscan_api as portscan_blueprint
 from .views.BandwidthView import bandwidth_api as bandwidth_blueprint
+from .views.RoutersView import router_api as router_blueprint
 
 
 def create_app(env_name):
@@ -23,12 +24,13 @@ def create_app(env_name):
     app.register_blueprint(device_blueprint, url_prefix='/api/v1/devices')
     app.register_blueprint(portscan_blueprint, url_prefix='/api/v1/portscan')
     app.register_blueprint(bandwidth_blueprint, url_prefix='/api/v1/bandwidth')
+    app.register_blueprint(router_blueprint, url_prefix='/api/v1/routers')
 
     @app.route('/', methods=['GET'])
     def index():
         """
         example endpoint
         """
-        return 'Congratulations! Your first endpoint is working'
+        return dict(Vault_Processor_Healthcheck="Healthy")
 
     return app

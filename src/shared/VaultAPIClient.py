@@ -7,9 +7,12 @@ class VaultAPIClient:
         self.URL = "http://{}:8080".format(self.ip)
 
     def perform_health_check(self):
-        endpoint = "{}/healthcheck".format(self.URL)
-        response = requests.get(endpoint)
-        return response.json(), response.status_code
+        try:
+            endpoint = "{}/healthcheck".format(self.URL)
+            response = requests.get(endpoint, timeout=5)
+            return response.json(), response.status_code
+        except requests.exceptions.ConnectTimeout:
+            return "TimeoutError-Failed-Health-Check", 404
 
     def get_download_speed(self):
         endpoint = "{}/get/downloadspeed".format(self.URL)

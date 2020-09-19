@@ -1,7 +1,4 @@
-# TODO: Create Error Handling For IP's That Don't Exist When PortScanning
-
 from flask import request, g, Blueprint, json, Response
-from ..shared.Authentication import Auth
 from ..models.PortScanModel import PortScanModel, PortScanSchema
 from ..models.DevicesModel import DeviceModel, DeviceSchema
 from ..shared.VaultAPIClient import VaultAPIClient
@@ -12,7 +9,6 @@ portscan_schema = PortScanSchema()
 
 
 @portscan_api.route('/scan/<device_ip>', methods=['GET'])
-# @Auth.auth_required
 def portscan(device_ip):
     """
     Create PortScan Function

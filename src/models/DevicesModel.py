@@ -21,6 +21,7 @@ class DeviceModel(db.Model):
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
     portscan_results = db.relationship('PortScanModel', backref='devices', lazy=True)
+    router_id = db.Column(db.Integer, db.ForeignKey('routers.id'), nullable=False)
 
     # Class Constructor
     def __init__(self, data):
@@ -32,6 +33,7 @@ class DeviceModel(db.Model):
         self.mac_address = data.get('mac_address')
         self.ip_address = data.get('ip_address')
         self.status = data.get('status')
+        self.router_id = data.get('router_id')
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
 
@@ -93,3 +95,4 @@ class DeviceSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     modified_at = fields.DateTime(dump_only=True)
     portscan_results = fields.Nested(PortScanSchema, many=True)
+    router_id = fields.Int(required=True)

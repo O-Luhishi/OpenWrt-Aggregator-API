@@ -4,5 +4,7 @@
 
 # TODO: Create Feature To Mark Devices As Offline When They Don't Appear In Scan
 
-
 # TODO: Create Way To OutPut Recent Activity
+
+# TODO: Create Error Handling For IP's That Don't Exist When PortScanning
+

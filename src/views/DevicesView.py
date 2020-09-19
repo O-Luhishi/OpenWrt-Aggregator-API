@@ -1,25 +1,32 @@
 from flask import request, json, Response, Blueprint
 from marshmallow import ValidationError
 from ..models.DevicesModel import DeviceModel, DeviceSchema
+from ..models.RouterModel import RouterModel, RouterSchema
 from ..shared.Authentication import Auth
 from ..shared.VaultAPIClient import VaultAPIClient
 
 device_api = Blueprint('devices', __name__)
 device_schema = DeviceSchema()
+router_schema = RouterSchema()
 
 
-# TODO: Update Vault-API With Dict Keys
-
-@device_api.route('/scan', methods=['GET'])
+@device_api.route('/scan/<router_ip>', methods=['GET'])
 # @Auth.auth_required -- TBD
-def scan():
+def scan(router_ip):
     """
     Scan Devices On A Network & Store Them In DB
     """
-    vault = VaultAPIClient("192.168.8.1")
+    # Validate Router IP Address Against Database Records
+    vault = VaultAPIClient(router_ip)
+    router_obj = RouterModel.get_router_by_ip(router_ip)
+    if not router_obj:
+        return return_response({'Error': 'No Routers Found'}, 404)
+    router = router_schema.dump(router_obj)
+    # Perform Network Scan On Sanitised IP Address
     devices = vault.perform_network_map().json()
     for device in range(len(devices['Clients'])):
         js = devices['Clients'][device]
+        js["router_id"] = router['id']
         try:
             data = device_schema.load(js)
             ip_in_db = DeviceModel.get_device_by_ip(data.get('ip_address'))
@@ -33,11 +40,10 @@ def scan():
     # ser_data = device_schema.dump(device).data
     # token = Auth.generate_token(ser_data.get('id'))
     # return custom_response({'jwt_token': token}, 201)
-
     return return_response({'Network-Scan': 'Success'}, 201)
 
 
-@device_api.route('/getalldevices', methods=['GET'])
+@device_api.route('/get_all_devices', methods=['GET'])
 def get_all_devices():
     devices = DeviceModel.get_all_devices()
     if not devices:
